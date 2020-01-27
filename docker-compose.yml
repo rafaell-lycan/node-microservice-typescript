@@ -24,3 +24,81 @@ services:
     ports:
       - "3002:8080"
     command: npm run serve
+
+  zookeeper1:
+    image: confluent/zookeeper
+    hostname: zookeeper1
+    ports:
+      - "2181"
+    environment:
+      zk_id: "1"
+      "zk_server.1": "zk1:2888:3888"
+      "zk_server.2": "zk2:2888:3888"
+      "zk_server.3": "zk3:2888:3888"
+    networks:
+      main:
+        aliases:
+          - zk1
+
+  zookeeper2:
+    image: confluent/zookeeper
+    hostname: zookeeper2
+    ports:
+      - "2181"
+    environment:
+      zk_id: "2"
+      "zk_server.1": "zk1:2888:3888"
+      "zk_server.2": "zk2:2888:3888"
+      "zk_server.3": "zk3:2888:3888"
+    networks:
+      main:
+        aliases:
+          - zk2
+
+  zookeeper3:
+    image: confluent/zookeeper
+    hostname: zookeeper3
+    ports:
+      - "2181"
+    environment:
+      "zk_id": "3"
+      "zk_server.1": "zk1:2888:3888"
+      "zk_server.2": "zk2:2888:3888"
+      "zk_server.3": "zk3:2888:3888"
+    networks:
+      main:
+        aliases:
+          - zk3
+
+  kafka:
+    image: confluent/kafka
+    hostname: kafka
+    links:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+    ports:
+      - "9092:9092"
+
+  schema-registry:
+    image: confluent/schema-registry
+    hostname: schema-registry
+    links:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+      - kafka
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+      - kafka
+    ports:
+      - "8081:8081"
+
+networks:
+  main:
