@@ -1,6 +1,15 @@
 version: '3'
 
 services:
+  nginx:
+    build: ./nginx
+    links:
+        - catalog
+        - orders
+        - users
+    ports:
+        - '80:80'
+
   users:
     restart: always
     build: ./users
@@ -9,7 +18,9 @@ services:
       - db
     ports:
       - '3000:8080'
-    command: npm run serve
+    volumes:
+        - './users:/src/app'
+    command: npm run dev
 
   orders:
     restart: always
@@ -17,7 +28,9 @@ services:
     container_name: orders-svc
     ports:
       - '3001:8080'
-    command: npm run serve
+    volumes:
+        - './orders:/src/app'
+    command: npm run dev
 
   catalog:
     restart: always
@@ -25,8 +38,10 @@ services:
     container_name: catalog-svc
     ports:
       - '3002:8080'
-    command: npm run serve
-    
+    volumes:
+        - './catalog:/src/app'
+    command: npm run dev
+
   db:
     image: postgres
     restart: always
