@@ -1,12 +1,12 @@
 import express from 'express'
+import {useExpressServer } from 'routing-controllers';
 
 const server = express()
 
-server.use('/_healthcheck', (_req, res) => {
-  res.status(200).json({
-    status: 'OK',
-    uptime: process.uptime()
-  });
+useExpressServer(server, {
+  controllers: [__dirname + '/api/controllers/*.ts'],
+  middlewares: [__dirname + '/api/middlewares/*.ts'],
+  defaultErrorHandler: false,
 });
 
 export default server;
