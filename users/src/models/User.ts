@@ -1,4 +1,4 @@
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import {Entity, PrimaryGeneratedColumn, Column, BeforeInsert} from 'typeorm'
 import { IsNotEmpty, IsEmail } from 'class-validator';
 import { Exclude } from 'class-transformer';
